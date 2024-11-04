@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function UpdateStudent() {
 
   const [fieldValues, setFieldValues] = useState({});
+  const [photo, setPhoto] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -15,10 +16,7 @@ function UpdateStudent() {
   function getStudent() {
     axios.get(`http://localhost/api/${id}`)
       .then(response => {
-        console.log(response.data)
         setFieldValues(response.data);
-        console.log("FIELD: " + fieldValues);
-
       })
       .catch(error => {
         console.error('Error fetching users:', error);
@@ -26,20 +24,33 @@ function UpdateStudent() {
   }
 
   const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setFieldValues(values => ({ ...values, [name]: value }));
+    const { name, value } = event.target;
+    setFieldValues((values) => ({ ...values, [name]: value }));
   }
+
+  const handleFileChange = (event) => {
+    setPhoto(event.target.files[0]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedValues = {
-      ...fieldValues,
-      id: id
-    };
 
-    axios.put(`http://localhost/api/${id}`, updatedValues)
+    const formData = new FormData();
+    Object.keys(fieldValues).forEach((key) => {
+      formData.append(key, fieldValues[key]);
+    });
+    formData.append('photo', photo);
+    formData.append('id', id);
+    console.log(formData.id);
+    
+
+    axios.put(`http://localhost/api/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
       .then(response => {
+        console.log(response.data);
         if (response.data.status === 1) {
           navigate('/students');
         } else {
@@ -49,28 +60,30 @@ function UpdateStudent() {
       .catch(error => {
         console.error('Error:', error);
       });;
-    console.log(fieldValues);
   }
 
   return (
     <div>
       <h2>Editar Informações do Estudante</h2>
-      <form type="submit" onSubmit={handleSubmit}>
-        <label for="name">Name:
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="name">Name:
           <input type="text" name="name" id="name" value={fieldValues.name} onChange={handleChange} /></label>
         <br />
-        <label for="email">Email:
+        <label htmlFor="email">Email:
           <input type="text" name="email" id="email" value={fieldValues.email} onChange={handleChange} /></label>
         <br />
-        <label for="phone">Telefone:
+        <label htmlFor="phone">Telefone:
           <input type="text" name="phone" id="phone" value={fieldValues.phone} onChange={handleChange} /></label>
         <br />
-        <label for="address">Endereço:
+        <label htmlFor="address">Endereço:
           <input type="text" name="address" id="address" value={fieldValues.address} onChange={handleChange} /></label>
         <br />
-        <label for="photo">Foto:
-          <input type="text" name="photo" id="photo" value={fieldValues.photo} onChange={handleChange} /></label>
-        <br />
+        <label htmlFor="photo">
+          {fieldValues.photo && (
+            <img src={`data:image/jpeg;base64,${fieldValues.photo}`} alt="Foto do Estudante" style={{ width: '100px', height: '100px' }} />
+          )}
+          <input type="file" name="photo" id="photo" onChange={handleFileChange} /> </label>
+        <input type="text" name="id" id="id" value={fieldValues.id} hidden />
         <button>Salvar</button>
       </form>
     </div>

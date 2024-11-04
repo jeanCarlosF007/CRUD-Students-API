@@ -49,7 +49,9 @@ function ListStudents() {
               <td>{student.email}</td>
               <td>{student.phone}</td>
               <td>{student.address}</td>
-              <td>{student.photo}</td>
+              <td>{student.photo && (
+                <img src={`data:image/jpeg;base64,${student.photo}`} alt="Student" style={{ width: '100px', height: '100px' }} />
+              )}</td>
               <td>
                 <Link to={`${student.id}/update`}>Edit</Link>
                 <button onClick={() => deleteStudent(student.id)}>Delete</button>

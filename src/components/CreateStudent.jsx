@@ -4,27 +4,44 @@ import { useNavigate } from "react-router-dom";
 
 function CreateStudent() {
 
-  const [fieldValues, setFieldValue] = useState({});
+  const [fieldValues, setFieldValues] = useState({});
+  const [photo, setPhoto] = useState(null);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setFieldValue(values => ({ ...values, [name]: value }));
+    const { name, value } = event.target;
+    setFieldValues((values) => ({ ...values, [name]: value }));
   }
+
+  const handleFileChange = (event) => {
+    setPhoto(event.target.files[0]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost/api/', fieldValues)
-      .then(response => {
+
+    const formData = new FormData();
+    Object.keys(fieldValues).forEach((key) => {
+      formData.append(key, fieldValues[key]);
+    });
+    formData.append('photo', photo);
+    formData.append('id', id);
+
+    axios.post('http://localhost/api/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then((response) => {
         console.log('Response from server:', response.data);
         navigate('/students');
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error:', error);
-      });;
-    console.log(fieldValues);
-  }
+      });
+
+  };
 
   return (
     <div>
@@ -42,7 +59,7 @@ function CreateStudent() {
           <input type="text" name="address" id="address" onChange={handleChange} /></label>
         <br />
         <label for="photo">Foto:
-          <input type="file" name="photo" id="photo" onChange={handleChange} /></label>
+          <input type="file" name="photo" id="photo" onChange={handleFileChange} /></label>
         <br />
         <button>Salvar</button>
       </form>
