@@ -4,7 +4,13 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function UpdateStudent() {
 
-  const [fieldValues, setFieldValues] = useState({});
+  const [fieldValues, setFieldValues] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    photo: null
+  });
   const [photo, setPhoto] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -39,10 +45,8 @@ function UpdateStudent() {
     Object.keys(fieldValues).forEach((key) => {
       formData.append(key, fieldValues[key]);
     });
-    formData.append('photo', photo);
     formData.append('id', id);
-    console.log(formData.id);
-    
+    formData.append('photo', photo);
 
     axios.put(`http://localhost/api/${id}`, formData, {
       headers: {
@@ -66,6 +70,12 @@ function UpdateStudent() {
     <div>
       <h2>Editar Informações do Estudante</h2>
       <form onSubmit={handleSubmit}>
+        <label htmlFor="photo">
+          {fieldValues.photo && (
+            <img src={`data:image/jpeg;base64,${fieldValues.photo}`} alt="Foto do Estudante" style={{ width: '100px', height: '100px' }} />
+          )}
+          <input type="file" name="photo" id="photo" onChange={handleFileChange} /> </label>
+          <br />
         <label htmlFor="name">Name:
           <input type="text" name="name" id="name" value={fieldValues.name} onChange={handleChange} /></label>
         <br />
@@ -78,12 +88,7 @@ function UpdateStudent() {
         <label htmlFor="address">Endereço:
           <input type="text" name="address" id="address" value={fieldValues.address} onChange={handleChange} /></label>
         <br />
-        <label htmlFor="photo">
-          {fieldValues.photo && (
-            <img src={`data:image/jpeg;base64,${fieldValues.photo}`} alt="Foto do Estudante" style={{ width: '100px', height: '100px' }} />
-          )}
-          <input type="file" name="photo" id="photo" onChange={handleFileChange} /> </label>
-        <input type="text" name="id" id="id" value={fieldValues.id} hidden />
+        
         <button>Salvar</button>
       </form>
     </div>

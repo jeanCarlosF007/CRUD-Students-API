@@ -7,7 +7,6 @@ function CreateStudent() {
   const [fieldValues, setFieldValues] = useState({});
   const [photo, setPhoto] = useState(null);
   const navigate = useNavigate();
-  const { id } = useParams();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -26,7 +25,6 @@ function CreateStudent() {
       formData.append(key, fieldValues[key]);
     });
     formData.append('photo', photo);
-    formData.append('id', id);
 
     axios.post('http://localhost/api/', formData, {
       headers: {
@@ -46,19 +44,19 @@ function CreateStudent() {
   return (
     <div>
       <form type="submit" onSubmit={handleSubmit}>
-        <label for="name">Name:
+        <label htmlFor="name">Name:
           <input type="text" name="name" id="name" onChange={handleChange} /></label>
         <br />
-        <label for="email">Email:
+        <label htmlFor="email">Email:
           <input type="text" name="email" id="email" onChange={handleChange} /></label>
         <br />
-        <label for="phone">Telefone:
+        <label htmlFor="phone">Telefone:
           <input type="text" name="phone" id="phone" onChange={handleChange} /></label>
         <br />
-        <label for="address">Endereço:
+        <label htmlFor="address">Endereço:
           <input type="text" name="address" id="address" onChange={handleChange} /></label>
         <br />
-        <label for="photo">Foto:
+        <label htmlFor="photo">Foto:
           <input type="file" name="photo" id="photo" onChange={handleFileChange} /></label>
         <br />
         <button>Salvar</button>

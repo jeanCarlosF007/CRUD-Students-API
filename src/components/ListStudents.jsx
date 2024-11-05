@@ -43,7 +43,7 @@ function ListStudents() {
         </thead>
         <tbody>
           {students.map((student, key) =>
-            <tr id={key}>
+            <tr key={key}>
               <td>{student.id}</td>
               <td>{student.name}</td>
               <td>{student.email}</td>
