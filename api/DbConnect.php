@@ -3,7 +3,7 @@
 		private $server = 'localhost';
 		private $dbname = 'delta-crud';
 		private $user = 'root';
-		private $pass = 'Uzumymw01!';
+		private $pass = '';
 
 		public function connect() {
 			try {

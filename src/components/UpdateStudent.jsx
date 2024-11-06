@@ -1,6 +1,69 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 80vh;
+  text-align: center;
+  padding: 1rem 1rem;
+`;
+
+const Title = styled.h2`
+  font-size: 3rem;
+  margin-bottom: 20px;
+`;
+
+const Image = styled.img`
+  width: 100px;
+  height: 100px;
+  justify-content: center;
+  border-radius: 10%;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 15px;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+  width: 100%;
+  max-width: 400px;
+`;
+
+const Label = styled.label`
+  font-size: 1.4rem;
+  text-align: left;
+  margin-bottom: 5px;
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+`;
+
+const Button = styled.button`
+  padding: 10px;
+  font-size: 1.4rem;
+  color: white;
+  background-color: #00425a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  &:hover {
+    background-color: #002f3d;
+  }
+`;
 
 function UpdateStudent() {
 
@@ -67,31 +130,32 @@ function UpdateStudent() {
   }
 
   return (
-    <div>
-      <h2>Editar Informações do Estudante</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="photo">
+    <Container>
+      <Title>Editar Informações do(a) Estudante</Title>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor="photo">
           {fieldValues.photo && (
-            <img src={`data:image/jpeg;base64,${fieldValues.photo}`} alt="Foto do Estudante" style={{ width: '100px', height: '100px' }} />
+            <Image src={`data:image/jpeg;base64,${fieldValues.photo}`} alt="Foto do Estudante" style={{ width: '100px', height: '100px' }} />
           )}
-          <input type="file" name="photo" id="photo" onChange={handleFileChange} /> </label>
-          <br />
-        <label htmlFor="name">Name:
-          <input type="text" name="name" id="name" value={fieldValues.name} onChange={handleChange} /></label>
-        <br />
-        <label htmlFor="email">Email:
-          <input type="text" name="email" id="email" value={fieldValues.email} onChange={handleChange} /></label>
-        <br />
-        <label htmlFor="phone">Telefone:
-          <input type="text" name="phone" id="phone" value={fieldValues.phone} onChange={handleChange} /></label>
-        <br />
-        <label htmlFor="address">Endereço:
-          <input type="text" name="address" id="address" value={fieldValues.address} onChange={handleChange} /></label>
-        <br />
+          <Input type="file" name="photo" id="photo" onChange={handleFileChange} /> 
+          </Label>
+        <Label htmlFor="name">Nome:
+          <Input type="text" name="name" id="name" value={fieldValues.name} onChange={handleChange} />
+        </Label>
+        <Label htmlFor="email">Email:
+          <Input type="text" name="email" id="email" value={fieldValues.email} onChange={handleChange} />
+        </Label>
+        <Label htmlFor="phone">Telefone:
+          <Input type="text" name="phone" id="phone" value={fieldValues.phone} onChange={handleChange} />
+        </Label>
+        <Label htmlFor="address">Endereço:
+          <Input type="text" name="address" id="address" value={fieldValues.address} onChange={handleChange} />
+        </Label>
+
         
-        <button>Salvar</button>
-      </form>
-    </div>
+        <Button>Salvar</Button>
+      </Form>
+    </Container>
   );
 }
 
