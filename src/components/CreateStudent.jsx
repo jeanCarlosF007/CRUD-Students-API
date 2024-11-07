@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import validation from "../utils/validation";
 
 const Container = styled.div`
   display: flex;
@@ -71,10 +72,23 @@ const Button = styled.button`
   }
 `;
 
+const ErrorText = styled.p`
+  color: red;
+  font-size: 1.2rem;
+  margin-top: 0.2rem;
+`;
+
 function CreateStudent() {
 
-  const [fieldValues, setFieldValues] = useState({});
+  const [fieldValues, setFieldValues] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    photo: null
+  });
   const [photo, setPhoto] = useState(null);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (event) => {
@@ -89,25 +103,46 @@ function CreateStudent() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    Object.keys(fieldValues).forEach((key) => {
-      formData.append(key, fieldValues[key]);
-    });
-    formData.append('photo', photo);
+    const newErrors = {};
 
-    axios.post('http://localhost/api/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then((response) => {
-        console.log('Response from server:', response.data);
-        navigate('/students');
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+    if (!validation.verifyNameLength(fieldValues.name)) {
+      newErrors.name = "O nome deve ter pelo menos 8 caracteres.";
+    }
+
+    if (!validation.isValidEmail(fieldValues.email)) {
+      newErrors.email = "O e-mail fornecido não é válido.";
+    }
+
+    if (!validation.isValidPhoneNumber(fieldValues.phone)) {
+      newErrors.phone = "Informe um telefone válido.";
+    }
+
+    if (!validation.isValidAddress(fieldValues.address)) {
+      newErrors.address = "Informe um endereço válido.";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      const formData = new FormData();
+      Object.keys(fieldValues).forEach((key) => {
+        formData.append(key, fieldValues[key]);
       });
+      formData.append('photo', photo);
 
+      axios.post('http://localhost/api/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then((response) => {
+          console.log('Response from server:', response.data);
+          navigate('/students');
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    } 
   };
 
   return (
@@ -115,20 +150,27 @@ function CreateStudent() {
       <Title>Digite abaixo as informações do(a) estudante a ser cadastrado(a)</Title>
       <FormContainer>
         <Form onSubmit={handleSubmit}>
-          <Label htmlFor="name">Nome:</Label>
-          <Input type="text" name="name" id="name" onChange={handleChange} />
+          <Label htmlFor="name">Nome:
+          <Input type="text" name="name" id="name" onChange={handleChange} required />
+          </Label>
+          {errors.name && <ErrorText>{errors.name}</ErrorText>}
 
-          <Label htmlFor="email">Email:</Label>
-          <Input type="text" name="email" id="email" onChange={handleChange} />
-
-          <Label htmlFor="phone">Telefone:</Label>
-          <Input type="text" name="phone" id="phone" onChange={handleChange} />
-
-          <Label htmlFor="address">Endereço:</Label>
-          <Input type="text" name="address" id="address" onChange={handleChange} />
-
-          <Label htmlFor="photo">Foto:</Label>
-          <Input type="file" name="photo" id="photo" onChange={handleFileChange} />
+          <Label htmlFor="email">Email:
+          <Input type="text" name="email" id="email" onChange={handleChange} required />
+          </Label>
+          {errors.email && <ErrorText>{errors.email}</ErrorText>}
+          <Label htmlFor="phone">Telefone:
+          <Input type="text" name="phone" id="phone" onChange={handleChange} required />
+          {errors.phone && <ErrorText>{errors.phone}</ErrorText>}
+          </Label>
+          <Label htmlFor="address">Endereço:
+          <Input type="text" name="address" id="address" onChange={handleChange} required />
+          {errors.address && <ErrorText>{errors.address}</ErrorText>}
+          </Label>
+          <Label htmlFor="photo">Foto:
+          <Input type="file" name="photo" id="photo" onChange={handleFileChange} required />
+          {errors.photo && <ErrorText>{errors.photo}</ErrorText>}
+          </Label>
 
           <Button type="submit">Salvar</Button>
         </Form>

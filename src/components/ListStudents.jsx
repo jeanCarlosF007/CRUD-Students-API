@@ -129,7 +129,7 @@ function ListStudents() {
             <Th>Email</Th>
             <Th>Telefone</Th>
             <Th>Endereço</Th>
-            <Th colspan='3'></Th>
+            <Th colSpan='3'></Th>
           </Tr>
         </TableHeader>
         <TableBody>
